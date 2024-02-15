@@ -2,12 +2,14 @@ package com.sample.hotel.entity;
 
 import io.jmix.core.entity.annotation.JmixGeneratedValue;
 import io.jmix.core.metamodel.annotation.JmixEntity;
+import org.hibernate.validator.constraints.Length;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Pattern;
 import java.util.UUID;
 
 @JmixEntity
@@ -27,9 +29,11 @@ public class Client {
     @NotNull
     private String lastName;
 
+    @Pattern(message = "{msg://com.sample.hotel.entity/Client.email.validation.Pattern}", regexp = "^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\\.[a-zA-Z0-9-.]+$")
     @Column(name = "EMAIL")
     private String email;
 
+    @Length(message = "{msg://com.sample.hotel.entity/Client.telephone.validation.Length}", min = 8, max = 16)
     @Column(name = "TELEPHONE")
     private String telephone;
 
