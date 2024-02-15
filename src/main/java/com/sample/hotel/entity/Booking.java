@@ -55,7 +55,7 @@ public class Booking {
     @DependsOnProperties({"arrivalDate"})
     @JmixProperty
     public Integer getCountdownDays() {
-        return Math.toIntExact(DAYS.between(arrivalDate, LocalDate.now()));
+        return Math.toIntExact(DAYS.between(LocalDate.now(), arrivalDate));
     }
 
     public LocalDate getDepartureDate() {
