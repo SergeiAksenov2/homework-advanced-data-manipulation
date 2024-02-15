@@ -4,9 +4,16 @@ import com.sample.hotel.entity.Booking;
 import com.sample.hotel.entity.Room;
 import com.sample.hotel.entity.RoomReservation;
 import org.springframework.stereotype.Component;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import java.time.LocalDate;
+import java.util.List;
 
 @Component
 public class BookingService {
+
+    @PersistenceContext
+    private EntityManager entityManager;
 
     /**
      * Check if given room is suitable for the booking.
@@ -19,8 +26,22 @@ public class BookingService {
      * @return true if checks are passed successfully
      */
     public boolean isSuitable(Booking booking, Room room) {
-        //todo implement me!
-        return true;
+        boolean placesOk = room.getSleepingPlaces() >= booking.getNumberOfGuests();
+
+        LocalDate arrivalDate = booking.getArrivalDate();
+        LocalDate departureDate = booking.getDepartureDate();
+
+        List<RoomReservation> RoomReservation = entityManager
+                .createQuery("select e.id from RoomReservation e where e.room = :room " +
+                                "and e.booking.arrivalDate < :departureDate " +
+                                "and e.booking.departureDate > :arrivalDate "
+                        , RoomReservation.class)
+                .setParameter("room", room)
+                .setParameter("arrivalDate", arrivalDate)
+                .setParameter("departureDate", departureDate)
+                .getResultList();
+
+        return placesOk && RoomReservation.isEmpty();
     }
 
     /**
