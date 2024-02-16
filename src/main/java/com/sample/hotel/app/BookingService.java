@@ -7,7 +7,6 @@ import org.springframework.stereotype.Component;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import java.time.LocalDate;
-import java.util.List;
 
 @Component
 public class BookingService {
@@ -27,21 +26,18 @@ public class BookingService {
      */
     public boolean isSuitable(Booking booking, Room room) {
         boolean placesOk = room.getSleepingPlaces() >= booking.getNumberOfGuests();
-
         LocalDate arrivalDate = booking.getArrivalDate();
         LocalDate departureDate = booking.getDepartureDate();
-
-        List<RoomReservation> RoomReservation = entityManager
+        boolean roomReservationList = entityManager
                 .createQuery("select e.id from RoomReservation e where e.room = :room " +
                                 "and e.booking.arrivalDate < :departureDate " +
-                                "and e.booking.departureDate > :arrivalDate "
-                        , RoomReservation.class)
+                                "and e.booking.departureDate > :arrivalDate ", RoomReservation.class)
                 .setParameter("room", room)
                 .setParameter("arrivalDate", arrivalDate)
                 .setParameter("departureDate", departureDate)
-                .getResultList();
-
-        return placesOk && RoomReservation.isEmpty();
+                .getResultList()
+                .isEmpty();
+        return placesOk && roomReservationList;
     }
 
     /**
