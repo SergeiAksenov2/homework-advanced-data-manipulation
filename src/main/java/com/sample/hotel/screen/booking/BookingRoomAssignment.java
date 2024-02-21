@@ -71,7 +71,7 @@ public class BookingRoomAssignment extends StandardLookup<Booking> {
                 .show();
     }
 
-    public void doReserveBooking(Room room, Booking booking) {
+    private void doReserveBooking(Room room, Booking booking) {
         RoomReservation result = bookingService.reserveRoom(booking, room);
         if (result == null) {
             notifications.create(Notifications.NotificationType.ERROR)
