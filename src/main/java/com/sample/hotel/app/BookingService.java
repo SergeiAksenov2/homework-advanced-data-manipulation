@@ -3,7 +3,10 @@ package com.sample.hotel.app;
 import com.sample.hotel.entity.Booking;
 import com.sample.hotel.entity.Room;
 import com.sample.hotel.entity.RoomReservation;
+import io.jmix.core.DataManager;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
+
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import java.time.LocalDate;
@@ -13,6 +16,11 @@ public class BookingService {
 
     @PersistenceContext
     private EntityManager entityManager;
+
+    private final DataManager dataManager;
+    public BookingService(DataManager dataManager) {
+        this.dataManager = dataManager;
+    }
 
     /**
      * Check if given room is suitable for the booking.
@@ -48,8 +56,15 @@ public class BookingService {
      *
      * @return created reservation object, or null if room is not suitable
      */
+    @Transactional
     public RoomReservation reserveRoom(Booking booking, Room room) {
-        //todo implement me!
+        if (isSuitable(booking, room)) {
+            RoomReservation roomReservation = dataManager.create(RoomReservation.class);
+            roomReservation.setBooking(booking);
+            roomReservation.setRoom(room);
+            dataManager.save(roomReservation);
+            return roomReservation;
+        }
         return null;
     }
 }
