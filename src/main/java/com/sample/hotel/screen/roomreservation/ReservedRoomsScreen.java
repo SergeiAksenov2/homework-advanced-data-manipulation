@@ -2,11 +2,14 @@ package com.sample.hotel.screen.roomreservation;
 
 import com.sample.hotel.entity.Client;
 import com.sample.hotel.entity.RoomReservation;
+import io.jmix.core.DataManager;
 import io.jmix.ui.Dialogs;
 import io.jmix.ui.action.Action;
 import io.jmix.ui.component.GroupTable;
 import io.jmix.ui.screen.*;
 import org.springframework.beans.factory.annotation.Autowired;
+
+import java.util.UUID;
 
 @UiController("ReservedRooms")
 @UiDescriptor("reserved-rooms.xml")
@@ -16,6 +19,8 @@ public class ReservedRoomsScreen extends StandardLookup<RoomReservation> {
     private GroupTable<RoomReservation> roomReservationsTable;
     @Autowired
     private Dialogs dialogs;
+    @Autowired
+    private DataManager dataManager;
 
     @Subscribe("roomReservationsTable.viewClientEmail")
     public void onRoomReservationsTableViewClientEmail(Action.ActionPerformedEvent event) {
@@ -23,11 +28,17 @@ public class ReservedRoomsScreen extends StandardLookup<RoomReservation> {
         if (reservation == null) {
             return;
         }
-        Client client = reservation.getBooking().getClient();
+
+        UUID clientId = reservation.getBooking().getClient().getId();
+        String clientEmail =dataManager.load(Client.class)
+                .query("select e from Client e where e.id = :clientId")
+                .parameter("clientId", clientId)
+                .one()
+                .getEmail();
 
         dialogs.createMessageDialog()
                 .withCaption("Client email")
-                .withMessage(client.getEmail())
+                .withMessage(clientEmail)
                 .show();
     }
 }

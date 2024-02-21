@@ -7,10 +7,17 @@
         <collection id="roomReservationsDc"
                     class="com.sample.hotel.entity.RoomReservation">
             <fetchPlan extends="_base">
-                <property name="booking" fetchPlan="_base">
-                    <property name="client" fetchPlan="_base"/>
+                <property name="booking" fetchPlan="_instance_name">
+                    <property name="client" fetchPlan="_instance_name">
+                        <property name="telephone"/>
+                    </property>
+                    <property name="numberOfGuests"/>
+                    <property name="arrivalDate"/>
+                    <property name="departureDate"/>
                 </property>
-                <property name="room" fetchPlan="_base"/>
+                <property name="room" fetchPlan="_instance_name">
+                    <property name="floor"/>
+                </property>
             </fetchPlan>
             <loader id="roomReservationsDl">
                 <query>
@@ -45,7 +52,7 @@
                     dataContainer="roomReservationsDc">
             <actions>
                 <action id="refresh" type="refresh"/>
-                <action id="viewClientEmail" caption="View client email" trackSelection="true"/>
+                <action id="viewClientEmail" caption="msg://viewClientEmail.caption" trackSelection="true"/>
             </actions>
             <columns>
                 <column id="room"/>
